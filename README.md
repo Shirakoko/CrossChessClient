@@ -64,7 +64,7 @@
   - Grid：Mono脚本，挂在在格子UI游戏物体上，用于鼠标点击响应和棋子UI显隐
   - AIPlayer：非Mono脚本，若对战双方含电脑AI，则在GameController的Start()函数中实例化
 
-![未命名文件](C:\Users\灰\Downloads\未命名文件 (1).png)
+![未命名文件](https://github.com/Shirakoko/CrossChess/assets/97279549/5924763c-b5dd-4893-8254-bdaa9088915e)
 
 ## 场景和用户界面UML图
 
@@ -73,8 +73,7 @@
   - Scenes/Set：设置对局双方信息（是电脑还是玩家、玩家昵称、电脑难度）
   - Scenes/Game：游玩场景
 
-![未命名文件 (3)](C:\Users\灰\Downloads\未命名文件 (3).png)
-
+![未命名文件 (3)](https://github.com/Shirakoko/CrossChess/assets/97279549/8270d9de-8f49-4275-bf10-6a85db20c475)
 
 
 ## 玩法流程图
@@ -84,7 +83,7 @@
   - PvE：人机对战，可自行设置玩家是先手还是后手以及电脑AI难度
   - EvE：电脑对战，可分别设置先手电脑和后手电脑的难度
 
-![未命名文件 (5)](C:\Users\灰\Downloads\未命名文件 (5).png)
+![未命名文件 (5)](https://github.com/Shirakoko/CrossChess/assets/97279549/ff6b59e6-4523-44e7-b7cf-af5b4ca59ec1)
 
 ## 电脑AI代码实现
 
