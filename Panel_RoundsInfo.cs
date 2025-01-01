@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
-using System;
-
 public class Panel_RoundsInfo : MonoBehaviour
 {
     public Panel_Replay Panel_Replay;
@@ -14,11 +11,63 @@ public class Panel_RoundsInfo : MonoBehaviour
 
     void OnEnable()
     {
-        ReadInfoFromTXT();
+        // 订阅接收消息事件
+        NetManager.Instance.OnReceiveRoundList += OnReceiveRoundList;
+    
+        if(NetManager.Instance.IsConnected)
+        {
+            // 向服务器发送RequestRoundList消息，请求获取战局列表
+            NetManager.Instance.Send(new RequestRoundList());
+        }
+        else
+        {
+            // 读取本地txt
+            ReadInfoFromTXT();
+        } 
+    }
+
+    void OnDisable()
+    {
+        // 取消订阅接收消息事件
+        NetManager.Instance.OnReceiveRoundList -= OnReceiveRoundList;
+    }
+
+    private void OnReceiveRoundList(Round[] rounds)
+    {
+        StartCoroutine(ShowRoundInfo(rounds));
+    }
+
+    private IEnumerator ShowRoundInfo(Round[] rounds)
+    {
+        for(int i = 0; i < rounds.Length; i++)
+        {
+            Round round = rounds[i];
+            GameObject itemObj = Instantiate(emp_Item, contentTrans);
+            itemObj.transform.GetChild(0).GetComponent<Text>().text = round.player1;
+            itemObj.transform.GetChild(1).GetComponent<Text>().text = round.player2;
+            string result = round.result.ToString();
+            switch (result)
+            {
+                case "0": result = "平手"; break;
+                case "1": result = "先手胜"; break;
+                case "2": result = "后手胜"; break;
+                default: break;
+            }
+            itemObj.transform.GetChild(2).GetComponent<Text>().text = result;
+            itemObj.transform.localPosition -= new Vector3(0, 100 * i, 0);
+
+            int[] steps = round.steps;
+            itemObj.transform.GetChild(3).GetComponent<Button>().onClick.AddListener(() => { Replicate(steps); });
+
+            yield return null; // 等待下一帧继续执行
+        }
+
+        RectTransform rectTrans = contentTrans.GetComponent<RectTransform>();
+        rectTrans.sizeDelta = new Vector2(0, 100 * rounds.Length); // 改变内容框的长度
     }
 
 # if UNITY_STANDALONE_WIN
-    void ReadInfoFromTXT()
+    private void ReadInfoFromTXT()
     {
         string filePath = Path.Combine(Application.streamingAssetsPath, "TXTs", "rounds.txt");
         //逐行读取返回的为数组数据
@@ -66,7 +115,7 @@ public class Panel_RoundsInfo : MonoBehaviour
         for(int i = 0; i < roundList.Count; i++)
         {
             GameObject itemObj = Instantiate(emp_Item, contentTrans);
-            int ID = roundList[i].ID;
+            int ID = roundList[i].roundID;
             itemObj.transform.GetChild(0).GetComponent<Text>().text = roundList[i].player1;
             itemObj.transform.GetChild(1).GetComponent<Text>().text = roundList[i].player2;
             int res = roundList[i].result; string result = "";

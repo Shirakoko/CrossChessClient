@@ -39,6 +39,17 @@ public class GameManager : MonoBehaviour
 
         mRoundItemCount = 0;
         mRoundList = new List<Round>();
+
+        // 保证网络模块存在，已通过Script Execution Order设置
+        if (NetManager.Instance == null) {
+            this.gameObject.AddComponent<NetManager>();
+        }
+    }
+
+    void Start()
+    {
+        // 开启客户端Socket并连接服务端
+        NetManager.Instance.StartClient();
     }
 
     # region "场景管理"

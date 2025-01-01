@@ -131,6 +131,9 @@ public class GameController : MonoBehaviour
         grid.ShowStone(GetCurrentSprite()); // 显示棋子
         steps[moveCount] = grid.ID; // 记录当前步骤
         // Debug.Log("第"+moveCount+"步下在："+grid.ID);
+
+        // 发送消息给服务器
+        // NetManager.Instance.Send($"第{moveCount}步，{grid.COLOR}棋，下在{grid.ID}");
         moveCount++; currentPlayer = !currentPlayer; // 增加步骤并切换当前行动方
 
         // 第五步开始要检查胜负情况
@@ -399,11 +402,10 @@ public class GameController : MonoBehaviour
     {
         if(isSaved){return;}
         Round round = new Round();
-        round.ID = _ROUNDCOUNT++;
+        round.roundID = _ROUNDCOUNT++;
         round.player1 = player1.name;
         round.player2 = player2.name;
         round.result = this.result;
-        round.steps = new int[9];
         for(int i=0; i<9;i++)
         {
             round.steps[i] = this.steps[i];
@@ -429,11 +431,15 @@ public class GameController : MonoBehaviour
             fs.Close();
             //销毁资源
             fs.Dispose();
-            Debug.Log("保存到："+filePath);
+            Debug.Log("保存到：" + filePath);
         }
 # endif
 
         isSaved = true;
+
+        // 发送战局结果给服务器
+        Debug.Log("发送战局结果给服务器");
+        NetManager.Instance.Send(round);
     }
     # endregion
 
@@ -451,87 +457,5 @@ public class Player
         this.isAI = isAI;
         this.isHardAI = isHardAI;
     }
-}
-
-public class Round
-{
-    public int ID; // 对战局数的ID
-    public string player1; // 先手的昵称
-    public string player2; // 后手的昵称
-    public int result; // 对战结果，1表示先手胜，2表示后手胜，0表示平局
-    public int[] steps; // 每一步的位置
-
-    // 把对局信息做成一个字符串
-    public string GetWriteString()
-    {
-        StringBuilder stringBuilder= new StringBuilder();
-        stringBuilder.Append(ID.ToString());
-        stringBuilder.Append("#");
-        stringBuilder.Append(player1);
-        stringBuilder.Append("#");
-        stringBuilder.Append(player2);
-        stringBuilder.Append("#");
-        stringBuilder.Append(result.ToString());
-        stringBuilder.Append("#");
-
-        // 记录结果
-        for (int i = 0; i<9; i++)
-        {
-            stringBuilder.Append(steps[i].ToString());
-        }
-
-        return stringBuilder.ToString();
-    }
-
-    # region "二进制序列化"
-    // 得到字节数组长度
-    // public int GetBytesNum()
-    // {
-    //     return sizeof(int)+ // ID
-    //                 sizeof(int)+Encoding.UTF8.GetBytes(player1).Length+ // player1的名字
-    //                     sizeof(int)+Encoding.UTF8.GetBytes(player2).Length+ // player2的名字
-    //                         sizeof(int); // result
-    // }
-
-    // 反序列化方法
-    // public int Reading(byte[] bytes, int beginIndex = 0)
-    // {
-    //     int index = beginIndex; int length;
-
-    //     // 反序列化变量
-    //     ID = BitConverter.ToInt32(bytes, index); index += sizeof(int);
-
-    //     length = BitConverter.ToInt32(bytes, index); index += sizeof(int);
-    //     player1 = Encoding.UTF8.GetString(bytes, index, length); index += length;
-
-    //     length = BitConverter.ToInt32(bytes, index); index += sizeof(int);
-    //     player2 = Encoding.UTF8.GetString(bytes, index, length); index += length;
-
-    //     result = BitConverter.ToInt32(bytes, index); index += sizeof(int);
-
-    //     return index - beginIndex;
-    // }
-
-    // 序列化方法
-    // public byte[] Writing()
-    // {
-    //     int index = 0;
-    //     byte[] bytes = new byte[GetBytesNum()];
-        
-    //     BitConverter.GetBytes(ID).CopyTo(bytes, index); index += sizeof(int);
-        
-    //     byte[] strBytes1 = Encoding.UTF8.GetBytes(player1);
-    //     BitConverter.GetBytes(strBytes1.Length).CopyTo(bytes, index); index += sizeof(int);
-    //     strBytes1.CopyTo(bytes, index); index += strBytes1.Length;
-
-    //      byte[] strBytes2 = Encoding.UTF8.GetBytes(player2);
-    //     BitConverter.GetBytes(strBytes2.Length).CopyTo(bytes, index); index += sizeof(int);
-    //     strBytes2.CopyTo(bytes, index);index += strBytes2.Length;
-
-    //     BitConverter.GetBytes(result).CopyTo(bytes, index); index += sizeof(int);
-
-    //     return bytes;
-    // }
-    # endregion
 }
 
