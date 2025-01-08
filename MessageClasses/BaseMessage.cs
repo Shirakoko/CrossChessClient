@@ -16,6 +16,9 @@ public enum MessageID
     // 进入大厅
     EnterHall = 1,
 
+    // 准许进入大厅
+    AllowEnterHall = 11,
+
     // 退出大厅
     QuitHall = 2,
 
@@ -23,7 +26,7 @@ public enum MessageID
     ClientQuit = 99,
 }
 
-public abstract class BaseMessage 
+public abstract class BaseMessage
 {
     /// <summary>
     /// 子类重写，消息ID
@@ -79,8 +82,10 @@ public abstract class BaseMessage
 
     protected void WriteData(byte[] bytes, BaseMessage data, ref int index)
     {
-        data.ConvertToByteArray().CopyTo(bytes, index);
-        index += data.GetBytesNum();
+        byte[] dataBytes = data.ConvertToByteArray();
+        int dataLengthWithoutID = data.GetBytesNum(); // 去掉消息ID的长度
+        Array.Copy(dataBytes, sizeof(int), bytes, index, dataLengthWithoutID);
+        index += dataLengthWithoutID;
     }
 
     protected void WriteDataList(byte[] bytes, BaseMessage[] data, ref int index)
@@ -135,11 +140,11 @@ public abstract class BaseMessage
     {
         int length = ReadInt(bytes, ref index);
         T[] data = new T[length];
-        for(int i = 0; i < length; i++)
+        for (int i = 0; i < length; i++)
         {
             data[i] = ReadData<T>(bytes, ref index);
         }
-        
+
         return data;
     }
 

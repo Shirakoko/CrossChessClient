@@ -12,7 +12,7 @@ public class Panel_RoundsInfo : MonoBehaviour
     void OnEnable()
     {
         // 订阅接收消息事件
-        NetManager.Instance.OnReceiveRoundList += OnReceiveRoundList;
+        NetManager.Instance.RegisterHandler(MessageID.ProvideRoundList, OnReceiveProvideRoundList);
     
         if(NetManager.Instance.IsConnected)
         {
@@ -29,11 +29,12 @@ public class Panel_RoundsInfo : MonoBehaviour
     void OnDisable()
     {
         // 取消订阅接收消息事件
-        NetManager.Instance.OnReceiveRoundList -= OnReceiveRoundList;
+        NetManager.Instance.UnregisterHandler(MessageID.ProvideRoundList, OnReceiveProvideRoundList);
     }
 
-    private void OnReceiveRoundList(Round[] rounds)
+    private void OnReceiveProvideRoundList(object data)
     {
+        Round[] rounds = data as Round[];
         StartCoroutine(ShowRoundInfo(rounds));
     }
 

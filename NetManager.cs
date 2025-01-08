@@ -1,12 +1,8 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
-using UnityEditor.VersionControl;
 using UnityEngine;
 
 public class NetManager: MonoBehaviour
@@ -15,9 +11,56 @@ public class NetManager: MonoBehaviour
     public static NetManager Instance{get {return _instance;}}
 
     /// <summary>
-    /// 接收服务端发来的战局信息消息后回调
+    /// 接收到服务端消息后的回调函数
     /// </summary>
-    public event Action<Round[]> OnReceiveRoundList;
+    private Dictionary<MessageID, Action<object>> messageHandlers = new Dictionary<MessageID, Action<object>>();
+
+    /// <summary>
+    /// 注册消息回调函数
+    /// </summary>
+    /// <param name="messageId">消息Id</param>
+    /// <param name="handler">回调函数</param>
+    public void RegisterHandler(MessageID messageId, Action<object> handler)
+    {
+        if (!messageHandlers.ContainsKey(messageId))
+        {
+            messageHandlers[messageId] = handler;
+        }
+        else
+        {
+            messageHandlers[messageId] += handler;
+        }
+    }
+
+    /// <summary>
+    /// 解绑回调函数
+    /// </summary>
+    /// <param name="messageId">消息Id</param>
+    /// <param name="handler">回调函数</param>
+    public void UnregisterHandler(MessageID messageId, Action<object> handler)
+    {
+        if (messageHandlers.ContainsKey(messageId))
+            {
+            messageHandlers[messageId] -= handler;
+            if (messageHandlers[messageId] == null)
+            {
+                messageHandlers.Remove(messageId);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 发送事件给事件监听者
+    /// </summary>
+    /// <param name="messageId">消息Id</param>
+    /// <param name="messageData"></param>
+    public void InvokeMessageCallback(MessageID messageId, object messageData)
+    {
+        if (messageHandlers.ContainsKey(messageId))
+        {
+            messageHandlers[messageId]?.Invoke(messageData);
+        }
+    }
 
     /** IP地址和端口号 */
     [Header("服务器IP地址")]
@@ -61,17 +104,15 @@ public class NetManager: MonoBehaviour
             Debug.Log("处理服务端消息，消息ID: " + (MessageID)messageID);
             switch(messageID)
             {
+                // 提供战局信息
                 case (int)MessageID.ProvideRoundList:
                     ProvideRoundList provideRoundList = new ProvideRoundList();
                     provideRoundList.ReadFromBytes(messageBytes, sizeof(int));
-                    if (OnReceiveRoundList != null)
-                    {
-                        OnReceiveRoundList.Invoke(provideRoundList.Rounds);
-                    }
-                    else
-                    {
-                        Debug.LogWarning("OnReceiveRoundList 事件没有订阅者");
-                    }
+                    this.InvokeMessageCallback(MessageID.ProvideRoundList, provideRoundList.Rounds);
+                    break;
+                // 准许进入大厅
+                case (int)MessageID.AllowEnterHall:
+                    this.InvokeMessageCallback(MessageID.AllowEnterHall, null);
                     break;
                 default:
                     break;
@@ -133,6 +174,7 @@ public class NetManager: MonoBehaviour
         {
             if(sendMsgQueue.Count > 0)
             {
+                Debug.Log("发送消息, ID: " + sendMsgQueue.Peek().GetMessageID());
                 socket.Send(sendMsgQueue.Dequeue().ConvertToByteArray());
             }
         }
