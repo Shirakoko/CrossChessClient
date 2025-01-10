@@ -12,29 +12,16 @@ public class Panel_Login : MonoBehaviour
     // 输入的用户名
     private string userName = "";
 
-    void OnEnable()
-    {
-        // 订阅接收消息事件
-        NetManager.Instance.RegisterHandler(MessageID.AllowEnterHall, OnAllowEnterHall);
-    }
-
-    void OnDisable()
-    {
-        // 取消订阅接收消息事件
-        NetManager.Instance.UnregisterHandler(MessageID.AllowEnterHall, OnAllowEnterHall);
-    }
-
-    private void OnAllowEnterHall(object data)
-    {
-        // TODO 接收到服务端准许进入大厅的消息，关闭当前Panel并展示大厅Panel
-        Debug.Log("接收到服务端准许进入大厅的消息");
-    }
+    [Header("大厅面板")]
+    public Panel_Hall Panel_Hall;
 
     // 进入大厅按钮
     public void Btn_Enter()
     {
         if(inputField.textComponent.text.Length > 0)
         {
+            userName = inputField.textComponent.text; // 赋值 userName
+            Panel_Hall.gameObject.SetActive(true);
             NetManager.Instance.Send(new EnterHall(userName));
         }
         else

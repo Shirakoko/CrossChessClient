@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using CrossChessServer.MessageClasses;
 using UnityEngine;
 
 public class NetManager: MonoBehaviour
 {
+    const int MESSAGE_ID_LENGTH = 4;
+
     private static NetManager _instance;
     public static NetManager Instance{get {return _instance;}}
 
@@ -107,12 +110,19 @@ public class NetManager: MonoBehaviour
                 // 提供战局信息
                 case (int)MessageID.ProvideRoundList:
                     ProvideRoundList provideRoundList = new ProvideRoundList();
-                    provideRoundList.ReadFromBytes(messageBytes, sizeof(int));
+                    provideRoundList.ReadFromBytes(messageBytes, MESSAGE_ID_LENGTH);
                     this.InvokeMessageCallback(MessageID.ProvideRoundList, provideRoundList.Rounds);
                     break;
                 // 准许进入大厅
                 case (int)MessageID.AllowEnterHall:
                     this.InvokeMessageCallback(MessageID.AllowEnterHall, null);
+                    break;
+                // 大厅用户数据
+                case (int)MessageID.HallClients:
+                    HallClients hallClients = new HallClients();
+                    hallClients.ReadFromBytes(messageBytes, MESSAGE_ID_LENGTH);
+                    Debug.Log("大厅用户个数: " + hallClients.clientIds.Length);
+                    this.InvokeMessageCallback(MessageID.HallClients, hallClients);
                     break;
                 default:
                     break;

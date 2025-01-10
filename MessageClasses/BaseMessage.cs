@@ -19,6 +19,9 @@ public enum MessageID
     // 准许进入大厅
     AllowEnterHall = 11,
 
+    // 大厅用户数据
+    HallClients = 12,
+
     // 退出大厅
     QuitHall = 2,
 
@@ -60,6 +63,15 @@ public abstract class BaseMessage
         index += sizeof(int);
     }
 
+    protected void WriteIntList(byte[] bytes, int[] values, ref int index)
+    {
+        WriteInt(bytes, values.Length, ref index);
+        for (int i = 0; i < values.Length; i++)
+        {
+            WriteInt(bytes, values[i], ref index);
+        }
+    }
+
     protected void WriteFloat(byte[] bytes, float value, ref int index)
     {
         BitConverter.GetBytes(value).CopyTo(bytes, index);
@@ -78,6 +90,15 @@ public abstract class BaseMessage
         WriteInt(bytes, strBytes.Length, ref index);
         strBytes.CopyTo(bytes, index);
         index += strBytes.Length;
+    }
+
+    protected void WriteStringList(byte[] bytes, string[] values, ref int index)
+    {
+        WriteInt(bytes, values.Length, ref index);
+        for (int i = 0; i < values.Length; i++)
+        {
+            WriteString(bytes, values[i], ref index);
+        }
     }
 
     protected void WriteData(byte[] bytes, BaseMessage data, ref int index)
@@ -106,6 +127,18 @@ public abstract class BaseMessage
         index += sizeof(int);
         return result;
     }
+
+    protected int[] ReadIntList(byte[] bytes, ref int index)
+    {
+        int length = ReadInt(bytes, ref index);
+        int[] result = new int[length];
+        for (int i = 0; i < length; i++)
+        {
+            result[i] = ReadInt(bytes, ref index);
+        }
+        return result;
+    }
+
     protected float ReadFloat(byte[] bytes, ref int index)
     {
         float result = BitConverter.ToSingle(bytes, index);
@@ -125,6 +158,17 @@ public abstract class BaseMessage
         int length = ReadInt(bytes, ref index);
         string result = Encoding.UTF8.GetString(bytes, index, length);
         index += length;
+        return result;
+    }
+
+    protected string[] ReadStringList(byte[] bytes, ref int index)
+    {
+        int length = ReadInt(bytes, ref index);
+        string[] result = new string[length];
+        for (int i = 0; i < length; i++)
+        {
+            result[i] = ReadString(bytes, ref index);
+        }
         return result;
     }
 
