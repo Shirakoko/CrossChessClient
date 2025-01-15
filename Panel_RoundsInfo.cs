@@ -7,8 +7,12 @@ public class Panel_RoundsInfo : MonoBehaviour
 {
     public Panel_Replay Panel_Replay;
     public GameObject emp_Item;
-    public Transform contentTrans; // 内容节点
+    private Transform contentTrans; // 内容节点
 
+    private void Awake()
+    {
+        contentTrans = this.transform.Find("SV_Info/Viewport/Content");
+    }
     void OnEnable()
     {
         // 订阅接收消息事件

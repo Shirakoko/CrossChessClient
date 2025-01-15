@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
@@ -56,13 +57,29 @@ public class NetManager: MonoBehaviour
     /// 发送事件给事件监听者
     /// </summary>
     /// <param name="messageId">消息Id</param>
-    /// <param name="messageData"></param>
-    public void InvokeMessageCallback(MessageID messageId, object messageData)
+    /// <param name="messageData">消息数据</param>
+    /// <param name="delaySeconds">延迟触发委托</param>
+    public void InvokeMessageCallback(MessageID messageId, object messageData, float delaySeconds = 0)
     {
         if (messageHandlers.ContainsKey(messageId))
         {
-            messageHandlers[messageId]?.Invoke(messageData);
+            StartCoroutine(DelayedInvoke(messageHandlers[messageId], messageData, delaySeconds));
         }
+        else
+        {
+            Debug.Log("消息ID: " + messageId + "未注册事件监听");
+        }
+    }
+
+    private IEnumerator DelayedInvoke(Action<object> handler, object messageData, float delaySeconds)
+    {
+        if (delaySeconds > 0) {
+            yield return new WaitForSeconds(delaySeconds);
+        } else {
+            yield return null;
+        }
+        
+        handler?.Invoke(messageData);
     }
 
     /** IP地址和端口号 */
@@ -121,7 +138,7 @@ public class NetManager: MonoBehaviour
                 case (int)MessageID.HallClients:
                     HallClients hallClients = new HallClients();
                     hallClients.ReadFromBytes(messageBytes, MESSAGE_ID_LENGTH);
-                    Debug.Log("大厅用户个数: " + hallClients.clientIds.Length);
+                    Debug.Log("发送大厅用户个数: " + hallClients.clientIds.Length);
                     this.InvokeMessageCallback(MessageID.HallClients, hallClients);
                     break;
                 default:
