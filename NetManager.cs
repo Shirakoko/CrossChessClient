@@ -147,7 +147,9 @@ public class NetManager: MonoBehaviour
         }
     }
 
-    // 开启客户端Socket并连接服务端
+    /// <summary>
+    /// 开启客户端Socket并连接服务端
+    /// </summary>
     public void StartClient()
     {
         // 如果是连接状态 直接返回
@@ -183,6 +185,21 @@ public class NetManager: MonoBehaviour
                 print("连接失败: " + e.ErrorCode + e.Message);
             }                
         }
+    }
+
+    /// <summary>
+    /// 关闭客户端Socket，并给服务端发送退出消息
+    /// </summary>
+    public void CloseClient()
+    {
+        // TODO 给服务端发送退出消息
+        if(socket != null)
+        {
+            socket.Shutdown(SocketShutdown.Both);
+            socket.Close();
+            socket = null;
+        }
+        isConnected = false;
     }
 
     /// <summary>
