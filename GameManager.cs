@@ -46,10 +46,16 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void Start()
+    void OnEnable()
     {
         // 开启客户端Socket并连接服务端
         NetManager.Instance.StartClient();
+    }
+
+    void OnDisable()
+    {
+        // 关闭客户端Socket
+        NetManager.Instance.CloseClient();
     }
 
     # region "场景管理"

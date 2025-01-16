@@ -191,10 +191,11 @@ public class NetManager: MonoBehaviour
     /// 关闭客户端Socket，并给服务端发送退出消息
     /// </summary>
     public void CloseClient()
-    {
-        // TODO 给服务端发送退出消息
+    {    
         if(socket != null)
         {
+            // 直接给服务端发送退出消息（不使用消息队列）
+            socket.Send(new ClientQuit().ConvertToByteArray());
             socket.Shutdown(SocketShutdown.Both);
             socket.Close();
             socket = null;
