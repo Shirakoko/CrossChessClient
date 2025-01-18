@@ -20,7 +20,7 @@ public class EnterHall : BaseMessage
     public override byte[] ConvertToByteArray()
     {
         int index = 0;
-        byte[] bytes = new byte[sizeof(int) + GetBytesNum()];
+        byte[] bytes = new byte[MESSAGE_ID_LENGTH + GetBytesNum()];
 
         WriteInt(bytes, (int)GetMessageID(), ref index);
         WriteString(bytes, userName, ref index);
@@ -55,7 +55,7 @@ public class AllowEnterHall : BaseMessage
     public override byte[] ConvertToByteArray()
     {
         int index = 0;
-        byte[] bytes = new byte[sizeof(int) + GetBytesNum()];
+        byte[] bytes = new byte[MESSAGE_ID_LENGTH + GetBytesNum()];
 
         WriteInt(bytes, (int)GetMessageID(), ref index);
         return bytes;

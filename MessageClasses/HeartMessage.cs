@@ -1,4 +1,4 @@
-public class ClientQuit : BaseMessage
+public class HeartMessage : BaseMessage
 {
     public override byte[] ConvertToByteArray()
     {
@@ -16,7 +16,7 @@ public class ClientQuit : BaseMessage
 
     public override MessageID GetMessageID()
     {
-        return MessageID.ClientQuit;
+        return MessageID.HeartMessage;
     }
 
     public override int ReadFromBytes(byte[] bytes, int beginIndex = 0)

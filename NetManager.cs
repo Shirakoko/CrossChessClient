@@ -7,9 +7,10 @@ using System.Threading;
 using CrossChessServer.MessageClasses;
 using UnityEngine;
 
+
 public class NetManager: MonoBehaviour
 {
-    const int MESSAGE_ID_LENGTH = 4;
+    private const float HEART_MESSAGE_INTERVAL = 4.0f;
 
     private static NetManager _instance;
     public static NetManager Instance{get {return _instance;}}
@@ -94,6 +95,9 @@ public class NetManager: MonoBehaviour
     private bool isConnected = false;
     public bool IsConnected => isConnected;
 
+    // 心跳消息对象
+    private HeartMessage heartMessage = new HeartMessage();
+
     /// <summary>
     /// 发送消息队列
     /// </summary>
@@ -112,6 +116,17 @@ public class NetManager: MonoBehaviour
     void Awake()
     {
         _instance = this;
+        InvokeRepeating("SendHeartMessage", 0, HEART_MESSAGE_INTERVAL);
+    }
+
+    private void SendHeartMessage()
+    {
+        if(isConnected)
+        {
+            // print("发送心跳消息");
+            // 直接使用socket发送字节，不加入消息发送队列
+            socket.Send(heartMessage.ConvertToByteArray());
+        }
     }
 
     void Update()
@@ -127,7 +142,7 @@ public class NetManager: MonoBehaviour
                 // 提供战局信息
                 case (int)MessageID.ProvideRoundList:
                     ProvideRoundList provideRoundList = new ProvideRoundList();
-                    provideRoundList.ReadFromBytes(messageBytes, MESSAGE_ID_LENGTH);
+                    provideRoundList.ReadFromBytes(messageBytes, BaseMessage.MESSAGE_ID_LENGTH);
                     this.InvokeMessageCallback(MessageID.ProvideRoundList, provideRoundList.Rounds);
                     break;
                 // 准许进入大厅
@@ -137,7 +152,7 @@ public class NetManager: MonoBehaviour
                 // 大厅用户数据
                 case (int)MessageID.HallClients:
                     HallClients hallClients = new HallClients();
-                    hallClients.ReadFromBytes(messageBytes, MESSAGE_ID_LENGTH);
+                    hallClients.ReadFromBytes(messageBytes, BaseMessage.MESSAGE_ID_LENGTH);
                     Debug.Log("发送大厅用户个数: " + hallClients.clientIds.Length);
                     this.InvokeMessageCallback(MessageID.HallClients, hallClients);
                     break;
@@ -198,6 +213,8 @@ public class NetManager: MonoBehaviour
             socket.Send(new ClientQuit().ConvertToByteArray());
             socket.Shutdown(SocketShutdown.Both);
             socket.Close();
+            // 关闭定期发送心跳消息
+            CancelInvoke("SendHeartMessage");
             socket = null;
         }
         isConnected = false;

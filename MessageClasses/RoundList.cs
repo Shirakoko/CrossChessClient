@@ -15,7 +15,7 @@ public class RequestRoundList: BaseMessage
     {
         int index = 0;
 
-        byte[] bytes = new byte[sizeof(int)];
+        byte[] bytes = new byte[MESSAGE_ID_LENGTH];
         WriteInt(bytes, (int)GetMessageID(), ref index);
 
         return bytes;
@@ -61,7 +61,7 @@ public class ProvideRoundList : BaseMessage
     public override byte[] ConvertToByteArray()
     {
         int index = 0;
-        byte[] bytes = new byte[sizeof(int) + GetBytesNum()];
+        byte[] bytes = new byte[MESSAGE_ID_LENGTH + GetBytesNum()];
         
         WriteInt(bytes, (int)GetMessageID(), ref index);
         WriteDataList(bytes, rounds, ref index);

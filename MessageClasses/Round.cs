@@ -50,7 +50,7 @@ public class Round: BaseMessage
     /// <returns></returns>
     public override int GetBytesNum()
     {
-        return sizeof(int)+ // 战局roundID
+        return MESSAGE_ID_LENGTH+ // 战局roundID
                     sizeof(int)+Encoding.UTF8.GetBytes(player1).Length+ // player1的名字
                         sizeof(int)+Encoding.UTF8.GetBytes(player2).Length+ // player2的名字
                             sizeof(int)+ // 战局result
@@ -88,7 +88,7 @@ public class Round: BaseMessage
     {
         int index = 0;
         // 字节数组长度为消息ID + 消息内容的总长度
-        byte[] bytes = new byte[sizeof(int) + GetBytesNum()];
+        byte[] bytes = new byte[MESSAGE_ID_LENGTH + GetBytesNum()];
 
         WriteInt(bytes, (int)GetMessageID(), ref index);
         WriteInt(bytes, roundID, ref index);

@@ -27,10 +27,15 @@ public enum MessageID
 
     // 客户端退出
     ClientQuit = 99,
+
+    // 心跳消息
+    HeartMessage = 100,
 }
+
 
 public abstract class BaseMessage
 {
+    public static int MESSAGE_ID_LENGTH = 4;
     /// <summary>
     /// 子类重写，消息ID
     /// </summary>

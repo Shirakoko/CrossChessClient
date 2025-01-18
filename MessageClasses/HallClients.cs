@@ -25,7 +25,7 @@ namespace CrossChessServer.MessageClasses
         public override byte[] ConvertToByteArray()
         {
             int index = 0;
-            byte[] bytes = new byte[sizeof(int) + GetBytesNum()];
+            byte[] bytes = new byte[MESSAGE_ID_LENGTH + GetBytesNum()];
             WriteInt(bytes, (int)GetMessageID(), ref index);
             WriteIntList(bytes, clientIds, ref index);
             WriteStringList(bytes, clientNames, ref index);
@@ -35,7 +35,7 @@ namespace CrossChessServer.MessageClasses
 
         public override int GetBytesNum()
         {
-            int size = 2 * sizeof(int); // clientIds和clientNames数组长度
+            int size = 2 * MESSAGE_ID_LENGTH; // clientIds和clientNames数组长度
             for (int i = 0; i < clientIds.Length; i++)
             {
                 size += sizeof(int); // clientIds[i]
