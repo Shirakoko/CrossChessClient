@@ -52,6 +52,53 @@ public class EnterHall : BaseMessage
 /// </summary>
 public class AllowEnterHall : BaseMessage
 {
+    // 客户端ID
+    public int clientID;
+
+    public AllowEnterHall()
+    {
+
+    }
+
+    public AllowEnterHall(int clientID)
+    {
+        this.clientID = clientID;
+    }
+    
+    public override byte[] ConvertToByteArray()
+    {
+        int index = 0;
+        byte[] bytes = new byte[sizeof(int) + GetBytesNum()];
+
+        WriteInt(bytes, (int)GetMessageID(), ref index);
+        WriteInt(bytes, clientID, ref index);
+        return bytes;
+    }
+
+    public override int GetBytesNum()
+    {
+        return sizeof(int);
+    }
+
+    public override MessageID GetMessageID()
+    {
+        return MessageID.AllowEnterHall;
+    }
+
+    public override int ReadFromBytes(byte[] bytes, int beginIndex = 0)
+    {
+        int index = beginIndex;
+        clientID = ReadInt(bytes, ref index);
+
+        return index - beginIndex;
+    }
+}
+
+/// <summary>
+/// 退出大厅
+/// </summary>
+public class QuitHall : BaseMessage
+{
     public override byte[] ConvertToByteArray()
     {
         int index = 0;
@@ -68,7 +115,7 @@ public class AllowEnterHall : BaseMessage
 
     public override MessageID GetMessageID()
     {
-        return MessageID.AllowEnterHall;
+        return MessageID.QuitHall;
     }
 
     public override int ReadFromBytes(byte[] bytes, int beginIndex = 0)

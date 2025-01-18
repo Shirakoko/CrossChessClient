@@ -16,6 +16,11 @@ public class NetManager: MonoBehaviour
     public static NetManager Instance{get {return _instance;}}
 
     /// <summary>
+    /// 客户端ID，进入大厅时获得，不在大厅内为0
+    /// </summary>
+    public int _clientID = 0;
+
+    /// <summary>
     /// 接收到服务端消息后的回调函数
     /// </summary>
     private Dictionary<MessageID, Action<object>> messageHandlers = new Dictionary<MessageID, Action<object>>();
@@ -147,6 +152,10 @@ public class NetManager: MonoBehaviour
                     break;
                 // 准许进入大厅
                 case (int)MessageID.AllowEnterHall:
+                    AllowEnterHall allowEnterHall = new AllowEnterHall();
+                    allowEnterHall.ReadFromBytes(messageBytes, BaseMessage.MESSAGE_ID_LENGTH);
+                    this._clientID = allowEnterHall.clientID;
+                    Debug.Log("收到服务端的准许进入大厅的消息，获得_clinetID: " + this._clientID);
                     this.InvokeMessageCallback(MessageID.AllowEnterHall, null);
                     break;
                 // 大厅用户数据
@@ -207,7 +216,7 @@ public class NetManager: MonoBehaviour
     /// </summary>
     public void CloseClient()
     {    
-        if(socket != null)
+        if(isConnected && socket != null)
         {
             // 直接给服务端发送退出消息（不使用消息队列）
             socket.Send(new ClientQuit().ConvertToByteArray());
