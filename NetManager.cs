@@ -19,6 +19,7 @@ public class NetManager: MonoBehaviour
     /// 客户端ID，进入大厅时获得，不在大厅内为0
     /// </summary>
     public int _clientID = 0;
+    public string _userName = "";
 
     /// <summary>
     /// 接收到服务端消息后的回调函数

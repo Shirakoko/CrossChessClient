@@ -15,6 +15,8 @@ public class Panel_Hall : MonoBehaviour
     void OnEnable()
     {
         NetManager.Instance.RegisterHandler(MessageID.HallClients, OnReceiveHallClients);
+        ClearAllClientItems();
+        NetManager.Instance.Send(new EnterHall(NetManager.Instance._userName));
     }
 
     void OnDisable()
@@ -22,7 +24,7 @@ public class Panel_Hall : MonoBehaviour
         NetManager.Instance.UnregisterHandler(MessageID.HallClients, OnReceiveHallClients);
     }
 
-    public void ClearAllClientItems()
+    private void ClearAllClientItems()
     {
         // 先清除contentTrans的所有游戏物体
         foreach (Transform child in contentTrans) {
@@ -74,6 +76,7 @@ public class Panel_Hall : MonoBehaviour
         {
             NetManager.Instance.Send(new QuitHall());
             NetManager.Instance._clientID = 0;
+            NetManager.Instance._userName = "";
         }
 
         this.gameObject.SetActive(false);
