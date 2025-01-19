@@ -25,6 +25,9 @@ public enum MessageID
     // 退出大厅
     QuitHall = 2,
 
+    // 发送对战请求
+    SendBattleRequest = 3,
+
     // 客户端退出
     ClientQuit = 99,
 

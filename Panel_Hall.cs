@@ -1,0 +1,81 @@
+using CrossChessServer.MessageClasses;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class Panel_Hall : MonoBehaviour
+{
+    public GameObject emp_BattleRequest;
+    private Transform contentTrans; // 内容节点
+
+    void Awake()
+    {
+        contentTrans = this.transform.Find("SV_Clients/Viewport/Content");
+    }
+
+    void OnEnable()
+    {
+        NetManager.Instance.RegisterHandler(MessageID.HallClients, OnReceiveHallClients);
+    }
+
+    void OnDisable()
+    {
+        NetManager.Instance.UnregisterHandler(MessageID.HallClients, OnReceiveHallClients);
+    }
+
+    public void ClearAllClientItems()
+    {
+        // 先清除contentTrans的所有游戏物体
+        foreach (Transform child in contentTrans) {
+            Destroy(child.gameObject);
+        }
+    }
+
+    private void OnReceiveHallClients(object data)
+    {
+        // 清除所有用户
+        ClearAllClientItems();
+        // 在准入之前不显示发起对战UI
+        if(NetManager.Instance._clientID == 0)
+        {
+            return;
+        }
+        // 根据大厅用户个数生成UI
+        HallClients hallClients = data as HallClients;
+        int clientsCount = hallClients.clientIds.Length;
+        for(int i=0; i<clientsCount; i++)
+        {
+            int clientId = hallClients.clientIds[i];
+            string clientName = hallClients.clientNames[i];
+
+            GameObject itemObj = Instantiate(emp_BattleRequest, contentTrans);
+            itemObj.transform.GetChild(0).GetComponent<Text>().text = clientId.ToString();
+            itemObj.transform.GetChild(1).GetComponent<Text>().text = clientName;
+
+            // 如果是自己出现在联机大厅，对战按钮禁用
+            if (clientId == NetManager.Instance._clientID) {
+                itemObj.transform.GetChild(2).GetComponent<Button>().enabled = false;
+            }
+            else
+            {
+                // 绑定按钮方法，向服务器发送对战请求消息
+                itemObj.transform.GetChild(2).GetComponent<Button>().onClick.AddListener(()=>{
+                    NetManager.Instance.Send(new SendBattleRequest(clientId));
+                });
+            }
+
+            itemObj.transform.localPosition -= new Vector3(0, 100 * i, 0);
+        }
+    }
+
+    // 退出大厅按钮
+    public void Btn_Quit()
+    {
+        if (NetManager.Instance._clientID != 0)
+        {
+            NetManager.Instance.Send(new QuitHall());
+            NetManager.Instance._clientID = 0;
+        }
+
+        this.gameObject.SetActive(false);
+    }
+}

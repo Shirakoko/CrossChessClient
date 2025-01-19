@@ -22,6 +22,7 @@ public class Panel_Login : MonoBehaviour
         {
             userName = inputField.textComponent.text; // 赋值 userName
             Panel_Hall.gameObject.SetActive(true);
+            Panel_Hall.ClearAllClientItems();
             NetManager.Instance.Send(new EnterHall(userName));
         }
         else

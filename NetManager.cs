@@ -162,7 +162,7 @@ public class NetManager: MonoBehaviour
                 case (int)MessageID.HallClients:
                     HallClients hallClients = new HallClients();
                     hallClients.ReadFromBytes(messageBytes, BaseMessage.MESSAGE_ID_LENGTH);
-                    Debug.Log("发送大厅用户个数: " + hallClients.clientIds.Length);
+                    Debug.Log("收到服务器发送的大厅用户数据，个数: " + hallClients.clientIds.Length);
                     this.InvokeMessageCallback(MessageID.HallClients, hallClients);
                     break;
                 default:
