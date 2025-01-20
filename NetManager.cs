@@ -7,6 +7,20 @@ using System.Threading;
 using CrossChessServer.MessageClasses;
 using UnityEngine;
 
+/// <summary>
+/// 用户信息结构体
+/// </summary>
+public struct UserInfo
+{
+    public string Name; // 用户名
+    public bool IsIdle; // 用户是否空闲
+
+    public UserInfo(string name, bool isIdle)
+    {
+        Name = name;
+        IsIdle = isIdle;
+    }
+}
 
 public class NetManager: MonoBehaviour
 {
@@ -157,7 +171,9 @@ public class NetManager: MonoBehaviour
                     allowEnterHall.ReadFromBytes(messageBytes, BaseMessage.MESSAGE_ID_LENGTH);
                     this._clientID = allowEnterHall.clientID;
                     Debug.Log("收到服务端的准许进入大厅的消息，获得_clinetID: " + this._clientID);
-                    this.InvokeMessageCallback(MessageID.AllowEnterHall, null);
+                    this.Send(new EnterHall(this._userName));
+                    // TODO 改成RequestHallClients
+                    this.Send(new EnterHall(this._userName));
                     break;
                 // 大厅用户数据
                 case (int)MessageID.HallClients:
@@ -165,6 +181,13 @@ public class NetManager: MonoBehaviour
                     hallClients.ReadFromBytes(messageBytes, BaseMessage.MESSAGE_ID_LENGTH);
                     Debug.Log("收到服务器发送的大厅用户数据，个数: " + hallClients.clientIds.Length);
                     this.InvokeMessageCallback(MessageID.HallClients, hallClients);
+                    break;
+                case (int)MessageID.SendBattleRequest:
+                    SendBattleRequest sendBattleRequest = new SendBattleRequest();
+                    sendBattleRequest.ReadFromBytes(messageBytes, BaseMessage.MESSAGE_ID_LENGTH);
+                    Debug.Log("收到来自客户端: " + sendBattleRequest.riverClientID 
+                        + sendBattleRequest.senderClientName + "的对战请求");
+                    this.InvokeMessageCallback(MessageID.SendBattleRequest, sendBattleRequest);
                     break;
                 default:
                     break;
