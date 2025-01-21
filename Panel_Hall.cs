@@ -8,6 +8,8 @@ public class Panel_Hall : MonoBehaviour
     public GameObject emp_BattleRequest;
     [Header("对战请求弹窗面板")]
     public Panel_BattleRequest panel_BattleRequest;
+    [Header("不可对战按钮图片")]
+    public Sprite image_CannotBattle;
     private Transform contentTrans; // 内容节点
 
     void Awake()
@@ -64,6 +66,7 @@ public class Panel_Hall : MonoBehaviour
             // 如果是自己出现在联机大厅，对战按钮禁用
             if (clientId == NetManager.Instance._clientID) {
                 itemObj.transform.GetChild(2).GetComponent<Button>().enabled = false;
+                itemObj.transform.GetChild(2).GetComponent<Button>().image.sprite = image_CannotBattle;
             }
             else
             {
@@ -78,6 +81,7 @@ public class Panel_Hall : MonoBehaviour
                 {
                     // 其他用户繁忙时，对战按钮禁用
                     itemObj.transform.GetChild(2).GetComponent<Button>().enabled = false;
+                    itemObj.transform.GetChild(2).GetComponent<Button>().image.sprite = image_CannotBattle;
                 }
             }
 

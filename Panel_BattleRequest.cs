@@ -35,6 +35,15 @@ public class Panel_BattleRequest : MonoBehaviour
         if(this.riverClientID != 0)
         {
             this.Text_Request.text = $"收到来自客户端[{this.riverClientID}]{this.riverName}的对战请求，是否接受？";
+            // 绑定接受和拒绝按钮方法
+            Btn_Accept.onClick.AddListener(() => {
+                NetManager.Instance.Send(new ReplyBattleRequest(this.riverClientID, true));
+            });
+            Btn_Reject.onClick.AddListener(() => {
+                NetManager.Instance.Send(new ReplyBattleRequest(this.riverClientID, false));
+                // 点拒绝之后按钮消失
+                this.gameObject.SetActive(false);
+            });
         }
         else
         {
