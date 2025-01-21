@@ -171,9 +171,8 @@ public class NetManager: MonoBehaviour
                     allowEnterHall.ReadFromBytes(messageBytes, BaseMessage.MESSAGE_ID_LENGTH);
                     this._clientID = allowEnterHall.clientID;
                     Debug.Log("收到服务端的准许进入大厅的消息，获得_clinetID: " + this._clientID);
-                    this.Send(new EnterHall(this._userName));
-                    // TODO 改成RequestHallClients
-                    this.Send(new EnterHall(this._userName));
+                    // 请求大厅用户数据
+                    this.Send(new RequestHallClients());
                     break;
                 // 大厅用户数据
                 case (int)MessageID.HallClients:
@@ -182,6 +181,7 @@ public class NetManager: MonoBehaviour
                     Debug.Log("收到服务器发送的大厅用户数据，个数: " + hallClients.clientIds.Length);
                     this.InvokeMessageCallback(MessageID.HallClients, hallClients);
                     break;
+                // 对战请求
                 case (int)MessageID.SendBattleRequest:
                     SendBattleRequest sendBattleRequest = new SendBattleRequest();
                     sendBattleRequest.ReadFromBytes(messageBytes, BaseMessage.MESSAGE_ID_LENGTH);

@@ -22,11 +22,17 @@ public enum MessageID
     // 大厅用户数据
     HallClients = 12,
 
+    // 请求大厅用户数据
+    RequestHallClients = 13,
+
     // 退出大厅
     QuitHall = 2,
 
     // 发送对战请求
     SendBattleRequest = 3,
+
+    // TODO 回复对战请求
+    ReplyBattleRequest = 4, 
 
     // 客户端退出
     ClientQuit = 99,

@@ -4,7 +4,10 @@ using UnityEngine.UI;
 
 public class Panel_Hall : MonoBehaviour
 {
+    [Header("对战请求条目")]
     public GameObject emp_BattleRequest;
+    [Header("对战请求弹窗面板")]
+    public Panel_BattleRequest panel_BattleRequest;
     private Transform contentTrans; // 内容节点
 
     void Awake()
@@ -18,8 +21,7 @@ public class Panel_Hall : MonoBehaviour
         NetManager.Instance.RegisterHandler(MessageID.SendBattleRequest, OnReceiveBattleRequest);
         // 清除所有大厅用户
         ClearAllClientItems();
-        // TODO 改成RequestHallClients
-        NetManager.Instance.Send(new EnterHall(NetManager.Instance._userName));
+        // NetManager.Instance.Send(new RequestHallClients());
     }
 
     void OnDisable()
@@ -91,6 +93,8 @@ public class Panel_Hall : MonoBehaviour
 
         Debug.Log("--------------------弹窗提示-----------------------");
         Debug.Log($"收到客户端: {riverClientID} {riverClientName}的对战请求，是否接收对战？");
+        this.panel_BattleRequest.RiverName = riverClientName; this.panel_BattleRequest.RiverClientID = riverClientID;
+        this.panel_BattleRequest.gameObject.SetActive(true);
     }
 
     // 退出大厅按钮
