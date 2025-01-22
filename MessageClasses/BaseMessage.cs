@@ -7,6 +7,12 @@ public enum MessageID
     // 战局信息
     RoundInfo = 6,
 
+    // 棋局状态
+    RoundState = 9,
+
+    // 落子信息
+    MoveInfo = 18,
+
     // 请求战局信息列表
     RequestRoundList = 7,
 
@@ -31,8 +37,11 @@ public enum MessageID
     // 发送对战请求
     SendBattleRequest = 3,
 
-    // TODO 回复对战请求
+    // 回复对战请求
     ReplyBattleRequest = 4, 
+
+    // 通知双方进入战局
+    EnterRound = 5,
 
     // 客户端退出
     ClientQuit = 99,

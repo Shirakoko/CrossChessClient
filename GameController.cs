@@ -123,7 +123,7 @@ public class GameController : MonoBehaviour
     // 人人对战，每次只有一步
     public void PvPMove(Grid grid)
     {
-        // 播放音效
+        // TODO 播放音效
 
         grid.COLOR = currentPlayer?COLOR.W:COLOR.B; // 赋值颜色
         gridArray[grid.ID/3][grid.ID%3] = (int)grid.COLOR; // 记录到棋盘状态数组gridArray中

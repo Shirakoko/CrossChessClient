@@ -73,6 +73,11 @@ public class GameManager : MonoBehaviour
     {
         SceneManager.LoadScene("Menu");
     }
+
+    public void ToOnlineGameScene()
+    {
+        SceneManager.LoadScene("OnlineGame");
+    }
     # endregion
 
 #if UNITY_WEBGL

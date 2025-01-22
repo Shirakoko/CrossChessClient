@@ -34,6 +34,8 @@ public class NetManager: MonoBehaviour
     /// </summary>
     public int _clientID = 0;
     public string _userName = "";
+    public bool _isPrevPlayer;
+    public int _onlineRoundIndex;
 
     /// <summary>
     /// 接收到服务端消息后的回调函数
@@ -156,7 +158,7 @@ public class NetManager: MonoBehaviour
         {
             byte[] messageBytes = receiveMsgQueue.Dequeue();
             int messageID = BitConverter.ToInt32(messageBytes, 0);
-            Debug.Log("处理服务端消息，消息ID: " + (MessageID)messageID);
+            // Debug.Log("处理服务端消息，消息ID: " + (MessageID)messageID);
             switch(messageID)
             {
                 // 提供战局信息
@@ -170,7 +172,7 @@ public class NetManager: MonoBehaviour
                     AllowEnterHall allowEnterHall = new AllowEnterHall();
                     allowEnterHall.ReadFromBytes(messageBytes, BaseMessage.MESSAGE_ID_LENGTH);
                     this._clientID = allowEnterHall.clientID;
-                    Debug.Log("收到服务端的准许进入大厅的消息，获得_clinetID: " + this._clientID);
+                    // Debug.Log("收到服务端的准许进入大厅的消息，获得_clinetID: " + this._clientID);
                     // 请求大厅用户数据
                     this.Send(new RequestHallClients());
                     break;
@@ -178,7 +180,7 @@ public class NetManager: MonoBehaviour
                 case (int)MessageID.HallClients:
                     HallClients hallClients = new HallClients();
                     hallClients.ReadFromBytes(messageBytes, BaseMessage.MESSAGE_ID_LENGTH);
-                    Debug.Log("收到服务器发送的大厅用户数据，个数: " + hallClients.clientIds.Length);
+                    // Debug.Log("收到服务器发送的大厅用户数据，个数: " + hallClients.clientIds.Length);
                     this.InvokeMessageCallback(MessageID.HallClients, hallClients);
                     break;
                 // 对战请求
@@ -188,6 +190,21 @@ public class NetManager: MonoBehaviour
                     Debug.Log("收到来自客户端: " + sendBattleRequest.riverClientID 
                         + sendBattleRequest.senderClientName + "的对战请求");
                     this.InvokeMessageCallback(MessageID.SendBattleRequest, sendBattleRequest);
+                    break;
+                // 进入对战
+                case (int)MessageID.EnterRound:
+                    EnterRound enterRound = new EnterRound();
+                    enterRound.ReadFromBytes(messageBytes, BaseMessage.MESSAGE_ID_LENGTH);
+                    this._isPrevPlayer = enterRound.isPrevPlayer; // 赋值是否是先手
+                    Debug.Log("---------进入对战---------是否先手: " + enterRound.isPrevPlayer);
+                    this._onlineRoundIndex = enterRound.onlineRoundIndex; // 赋值在服务器上的对战ID
+                    GameManager.Instance.ToOnlineGameScene();
+                    break;
+                case (int)MessageID.MoveInfo:
+                    MoveInfo moveInfo = new MoveInfo();
+                    moveInfo.ReadFromBytes(messageBytes, BaseMessage.MESSAGE_ID_LENGTH);
+                    Debug.Log($"对手下在了{moveInfo.pos}位置");
+                    this.InvokeMessageCallback(MessageID.MoveInfo, moveInfo);
                     break;
                 default:
                     break;

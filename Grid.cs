@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class Grid : MonoBehaviour, IPointerDownHandler
 {
     public int ID; // 格子的ID
-    public COLOR COLOR; // 各自的状态，0白子，1黑子，2没子
+    public COLOR COLOR; // 格子的状态，W白子，B黑子，G没子
     private Image stone; // 棋子的图片
 
     void Awake()
