@@ -1,11 +1,15 @@
-using System;
 using System.Collections;
 using System.IO;
 using UnityEngine;
 using System.Text;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+
+public enum RESULT {
+    DRAW = 0, // 平局
+    PREV = 1, // 白子（先手）胜利
+    LATE = 2, // 黑子（后手）胜利
+}
 public class GameController : MonoBehaviour
 {
     private static GameController _instance;
@@ -24,7 +28,7 @@ public class GameController : MonoBehaviour
     private bool currentPlayer; // 当前下棋的玩家，true表示先手，false表示后手
     private int[] steps; // 每一步的位置
 
-    private int result;
+    private RESULT result;
 
     public Sprite[] stoneSprites; // 先后手的不同棋子的图片
 
@@ -144,18 +148,18 @@ public class GameController : MonoBehaviour
 
             if(winColor == COLOR.W)
             {
-                // Debug.Log("白先手获胜，弹出结束菜单");
-                result = 1; canClick = false;
+                Debug.Log("白先手获胜，弹出结束菜单");
+                result = RESULT.PREV; canClick = false;
             }
             else if(winColor == COLOR.B)
             {
-                // Debug.Log("黑后手获胜，弹出结束菜单");
-                result = 2; canClick = false;
+                Debug.Log("黑后手获胜，弹出结束菜单");
+                result = RESULT.LATE; canClick = false;
             }
             else if(moveCount>=9)
             {
-                // Debug.Log("打平了，弹出结束菜单");
-                result = 0; canClick = false;
+                Debug.Log("打平了，弹出结束菜单");
+                result = RESULT.DRAW; canClick = false;
             }
             StartCoroutine(ShowGameOverPanel());
         }
@@ -183,21 +187,21 @@ public class GameController : MonoBehaviour
             if(winColor == COLOR.W)
             {
                 // Debug.Log("白先手获胜，弹出结束菜单");
-                result = 1; canClick = false;
+                result = RESULT.PREV; canClick = false;
                 StartCoroutine(ShowGameOverPanel());
                 return;
             }
             else if(winColor == COLOR.B)
             {
                 // Debug.Log("黑后手获胜，弹出结束菜单");
-                result = 2; canClick = false;
+                result = RESULT.LATE; canClick = false;
                 StartCoroutine(ShowGameOverPanel());
                 return;
             }
             else if(moveCount>=9)
             {
                 // Debug.Log("打平了，弹出结束菜单");
-                result = 0; canClick = false;
+                result = RESULT.DRAW; canClick = false;
                 StartCoroutine(ShowGameOverPanel());
                 return;
             }
@@ -234,9 +238,9 @@ public class GameController : MonoBehaviour
         string resultStr = "";
         switch(result)
         {
-            case 0: resultStr = "打成平手"; break;
-            case 1: resultStr = player1.name+"获胜"; break;
-            case 2: resultStr = player2.name+"获胜"; break;
+            case RESULT.DRAW: resultStr = "打成平手"; break;
+            case RESULT.PREV: resultStr = player1.name+"获胜"; break;
+            case RESULT.LATE: resultStr = player2.name+"获胜"; break;
             default: break;
         }
         Text_Result.text = resultStr;
@@ -284,7 +288,7 @@ public class GameController : MonoBehaviour
                     if(winColor == COLOR.W)
                     {
                         // Debug.Log("白先手获胜，弹出结束菜单");
-                        result = 1; canClick = false;
+                        result = RESULT.PREV; canClick = false;
                         StopCoroutine(eveCoroutine); // 停止协程
                         StartCoroutine(ShowGameOverPanel());
                         yield return null;
@@ -292,7 +296,7 @@ public class GameController : MonoBehaviour
                     else if(winColor == COLOR.B)
                     {
                         // Debug.Log("黑后手获胜，弹出结束菜单");
-                        result = 2; canClick = false;
+                        result = RESULT.LATE; canClick = false;
                         StopCoroutine(eveCoroutine); // 停止协程
                         StartCoroutine(ShowGameOverPanel());
                         yield return null;
@@ -300,7 +304,7 @@ public class GameController : MonoBehaviour
                     else if(moveCount>=9)
                     {
                         // Debug.Log("打平了，弹出结束菜单");
-                        result = 0; canClick = false;
+                        result = RESULT.DRAW; canClick = false;
                         StopCoroutine(eveCoroutine); // 停止协程
                         StartCoroutine(ShowGameOverPanel());
                         yield return null;
@@ -337,21 +341,21 @@ public class GameController : MonoBehaviour
             if(winColor == COLOR.W)
             {
                 // Debug.Log("白先手获胜，弹出结束菜单");
-                result = 1; canClick = false;
+                result = RESULT.PREV; canClick = false;
                 StartCoroutine(ShowGameOverPanel());
                 yield return null;
             }
             else if(winColor == COLOR.B)
             {
                 // Debug.Log("黑后手获胜，弹出结束菜单");
-                result = 2; canClick = false;
+                result = RESULT.LATE; canClick = false;
                 StartCoroutine(ShowGameOverPanel());
                 yield return null;
             }
             else if(moveCount>=9)
             {
                 // Debug.Log("打平了，弹出结束菜单");
-                result = 0; canClick = false;
+                result = RESULT.DRAW; canClick = false;
                 StartCoroutine(ShowGameOverPanel());
                 yield return null;
             }
@@ -405,7 +409,7 @@ public class GameController : MonoBehaviour
         round.roundID = _ROUNDCOUNT++;
         round.player1 = player1.name;
         round.player2 = player2.name;
-        round.result = this.result;
+        round.result = (int)this.result;
         for(int i=0; i<9;i++)
         {
             round.steps[i] = this.steps[i];

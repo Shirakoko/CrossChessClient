@@ -14,6 +14,8 @@ public class Panel_Login : MonoBehaviour
     // 进入大厅按钮
     public void Btn_Enter()
     {
+        // TODO
+        // 修复点击“开始游戏”后再选择联机，无法进入大厅的bug
         if(inputField.textComponent.text.Length > 0)
         {
             NetManager.Instance._userName = inputField.textComponent.text; // 赋值 userName
