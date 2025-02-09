@@ -11,11 +11,15 @@ public class Panel_Login : MonoBehaviour
     [Header("大厅面板")]
     public Panel_Hall Panel_Hall;
 
+    private void OnEnable()
+    {
+        // 登录面板激活时，开启客户端Socket以连接服务端
+        NetManager.Instance.StartClient();
+    }
+
     // 进入大厅按钮
     public void Btn_Enter()
     {
-        // TODO
-        // 修复点击“开始游戏”后再选择联机，无法进入大厅的bug
         if(inputField.textComponent.text.Length > 0)
         {
             NetManager.Instance._userName = inputField.textComponent.text; // 赋值 userName
@@ -26,5 +30,13 @@ public class Panel_Login : MonoBehaviour
         {
             Debug.Log("用户名长度不能为0");
         }
+    }
+
+    // 返回主菜单按钮
+    public void Btn_Back()
+    {
+        // 关闭客户端socket
+        NetManager.Instance.CloseClient();
+        this.gameObject.SetActive(false);
     }
 }

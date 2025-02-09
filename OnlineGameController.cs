@@ -111,7 +111,7 @@ public class OnlineGameController : MonoBehaviour
     private void CheckAndHandleGameResult()
     {
         COLOR winColor = CheckWin();
-        // TODO处理结果
+
         if (moveCount < 9 && winColor == COLOR.G) { return; } // 还没下满且未分胜负时继续游戏
 
         if (winColor == COLOR.W)

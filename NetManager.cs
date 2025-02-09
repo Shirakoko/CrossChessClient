@@ -137,7 +137,10 @@ public class NetManager: MonoBehaviour
 
     void Awake()
     {
-        _instance = this;
+        if(_instance==null)
+        {
+            _instance=this;
+        }
         InvokeRepeating("SendHeartMessage", 0, HEART_MESSAGE_INTERVAL);
     }
 
