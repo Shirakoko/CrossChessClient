@@ -247,4 +247,12 @@ public class OnlineGameController : MonoBehaviour
         Debug.Log("发送战局结果给服务器");
         NetManager.Instance.Send(round);
     }
+
+    /// <summary>
+    /// 返回大厅
+    /// </summary>
+    public void Btn_BackToHall()
+    {
+        GameManager.Instance.ToMenuScene();
+    }
 }
