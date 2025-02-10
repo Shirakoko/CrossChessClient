@@ -11,7 +11,7 @@ if not exist "%TARGET_DIR%" (
     mkdir "%TARGET_DIR%"
 )
 
-REM 复制所有.cs文件，并在覆盖重名文件
+REM 复制所有.cs文件，并覆盖重名文件
 echo 正在复制.cs文件...
 xcopy "%SCRIPT_DIR%*.cs" "%TARGET_DIR%\" /Y /E /I
 
