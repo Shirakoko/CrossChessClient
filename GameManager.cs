@@ -48,7 +48,7 @@ public class GameManager : MonoBehaviour
 
     void OnDisable()
     {
-        // 关闭客户端Socket
+        // 关闭客户端Socket，过场景时也会调用OnDisable()
         NetManager.Instance.CloseClient();
     }
 
