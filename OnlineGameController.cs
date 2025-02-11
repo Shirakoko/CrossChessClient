@@ -129,8 +129,10 @@ public class OnlineGameController : MonoBehaviour
             Debug.Log("打平了，弹出结束菜单");
             result = RESULT.DRAW; canClick = false;
         }
-
-        // 开启协程
+        // 给服务端发送对战结果
+        NetManager.Instance.Send(new OnlineRoundResult(NetManager.Instance._onlineRoundIndex, 
+                    NetManager.Instance._userName, this.isPrevPlayer, (int)this.result, this.steps));
+        // 开启协程显示游戏结束面板
         StartCoroutine(ShowGameOverPanel());
     }
 

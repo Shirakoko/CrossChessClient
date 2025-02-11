@@ -15,6 +15,7 @@ public class Panel_Hall : MonoBehaviour
     void Awake()
     {
         contentTrans = this.transform.Find("SV_Clients/Viewport/Content");
+        panel_BattleRequest = null;
     }
 
     void OnEnable()
@@ -30,6 +31,25 @@ public class Panel_Hall : MonoBehaviour
     {
         NetManager.Instance.UnregisterHandler(MessageID.HallClients, OnReceiveHallClients);
         NetManager.Instance.RegisterHandler(MessageID.SendBattleRequest, OnReceiveBattleRequest);
+    }
+
+    void Start()
+    {
+        if (panel_BattleRequest == null || panel_BattleRequest.gameObject == null)
+        {
+            Debug.Log("重新获取BattleRequest");
+            Transform parent = transform.parent;
+            if (parent != null)
+            {
+                // 查找同级的 Panel_BattleRequest
+                panel_BattleRequest = parent.Find("Panel_BattleRequest")?.GetComponent<Panel_BattleRequest>();
+            }
+
+            if (panel_BattleRequest == null)
+            {
+                Debug.LogError("Panel_BattleRequest not found in the same parent!");
+            }
+        }
     }
 
     private void ClearAllClientItems()
@@ -97,6 +117,8 @@ public class Panel_Hall : MonoBehaviour
 
         Debug.Log("--------------------弹窗提示-----------------------");
         Debug.Log($"收到客户端: {riverClientID} {riverClientName}的对战请求，是否接收对战？");
+        Debug.Log("null? " + this.panel_BattleRequest == null + " " + this.panel_BattleRequest.gameObject);
+        //TODO 处理切换场景后panel_BattleRequest为空的问题
         this.panel_BattleRequest.RiverName = riverClientName; this.panel_BattleRequest.RiverClientID = riverClientID;
         this.panel_BattleRequest.gameObject.SetActive(true);
     }

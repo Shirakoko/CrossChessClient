@@ -274,9 +274,9 @@ public class NetManager: MonoBehaviour
     }
 
     /// <summary>
-    /// 发送字符串消息给服务器
+    /// 发送消息给服务器
     /// </summary>
-    /// <param name="message">字符串消息</param>
+    /// <param name="message">消息</param>
     public void Send(BaseMessage message)
     {
         sendMsgQueue.Enqueue(message);

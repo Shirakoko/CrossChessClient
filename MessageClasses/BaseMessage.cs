@@ -48,6 +48,9 @@ public enum MessageID
 
     // 心跳消息
     HeartMessage = 100,
+
+    // 联机对战结果
+    OnlineRoundResult = 9,
 }
 
 

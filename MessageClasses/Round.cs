@@ -5,7 +5,7 @@ using System.Text;
 /// </summary>
 public class Round: BaseMessage
 {
-    public int roundID; // 对战局数的ID
+    public int roundID; // 战局ID
     public string player1; // 先手的昵称
     public string player2; // 后手的昵称
     public int result; // 对战结果，1表示先手胜，2表示后手胜，0表示平局
