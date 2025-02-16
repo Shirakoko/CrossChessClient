@@ -37,7 +37,6 @@ public class OnlineGrid : MonoBehaviour, IPointerDownHandler
     // 格子被按下后执行的函数
     public void OnPointerDown(PointerEventData eventData)
     {
-        Debug.Log("OnPointerDown");
         if(State != COLOR.G){return;} // 格子中有棋子则不响应
         if(OnlineGameController.Instance.canClick==false){return;}
         
