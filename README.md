@@ -1,6 +1,6 @@
-# 客户端部分
+# 联网模块客户端部分
 
-客户端用Unity引擎开发，其中网络模块的核心是NetManager.cs。
+客户端用Unity引擎开发，在单机游戏的基础上已实现联机对战功能，其中网络模块的核心是NetManager.cs。
 
 ## 1.NetManager功能拆解
 
