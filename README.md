@@ -5,10 +5,9 @@
 
 - Windows版本（Github上）的安装运行方法：
   - 访问：访问游戏的Github页面：[Shirakoko/CrossChess: 技术策划笔试 (github.com)](https://github.com/Shirakoko/CrossChess)
-  - 下载： 可以从main分支下载，也可从Compressed分支下载
+  - 下载： 从main分支下载未压缩文件夹，也可从Compressed分支下载压缩包，或者release安装包：[![Latest Release](https://img.shields.io/github/v/release/Shirakoko/CrossChessClient)](https://github.com/Shirakoko/CrossChessClient/releases/latest)
   - 解压：右键点击CrossChess.zip，选择“解压到当前文件夹”
-  - 打开解压后的文件夹，找到游戏的启动程序，即CrossChess.exe
-  - 启动：双击启动程序
+  - 启动：打开解压后的文件夹，找到游戏的启动程序，即CrossChess.exe，双击启动程序
 
 - WebGL版本（发布在itch.io上）的运行方法
   - 打开您的网络浏览器
